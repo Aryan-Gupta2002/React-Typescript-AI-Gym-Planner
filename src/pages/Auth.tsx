@@ -1,3 +1,5 @@
+import { AuthView } from "@neondatabase/neon-js/auth/react";
+
 export default function Auth(){
-    return<div>Auth Page</div>
+    return<div><AuthView pathname=""/></div>
 }
