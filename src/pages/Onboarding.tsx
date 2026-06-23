@@ -1,5 +1,11 @@
 import { RedirectToSignIn, SignedIn } from "@neondatabase/neon-js/auth/react";
 import { useAuth } from "../context/AuthContext";
+import { Card } from "../components/ui/Card";
+import { Select } from "../components/ui/Select";
+import { Textarea } from "../components/ui/Textarea";
+import React, { useState } from "react";
+import { ArrowRight, Bubbles } from "lucide-react";
+import { Button } from "../components/ui/Button";
 
 const goalOptions = [
   { value: "bulk", label: "Build Muscle (Bulk)" },
@@ -45,6 +51,21 @@ const splitOptions = [
 
 export default function Onboarding() {
   const { user } = useAuth();
+  const [formData, setFormData] = useState({
+    goal: "bulk",
+    experience: "intermediate",
+    daysPerWeek: "4",
+    sessionLength: "60",
+    equipment: "full_gym",
+    injuries: "",
+    preferredSplit: "upper_lower",
+  });
+  function updateForm(field: string, value: string) {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  }
+  async function handleQuestionnaire(e: React.SubmitEvent) {
+    e.preventDefault();
+  }
   if (!user) {
     return <RedirectToSignIn />;
   }
@@ -54,6 +75,59 @@ export default function Onboarding() {
         <div className="max-w-xl mx-auto">
           {/* Progress Indicator */}
           {/* Step1 : Questionare */}
+          <Card variant="bordered">
+            <h1 className="text-2xl font-bold mb-2">
+              Tell us more about yourself
+            </h1>
+            <p className="text-[var(---color-muted)] mb-6">
+              Help us create the perfect plan for you{" "}
+            </p>
+            <form onSubmit={handleQuestionnaire} className="space-y-5">
+              <Select
+                id="goal"
+                label="What's your primary goal"
+                options={goalOptions}
+                value={formData.goal}
+                onChange={(e) => updateForm("goal", e.target.value)}
+              ></Select>
+              <Select
+                id="experience"
+                label="What's your experience"
+                options={experienceOptions}
+                value={formData.experience}
+                onChange={(e) => updateForm("experience", e.target.value)}
+              ></Select>
+              <div className="grid grid-cols-2 gap-4">
+                <Select
+                  id="daysPerWeek"
+                  label="How many days you exercise per week"
+                  options={daysOptions}
+                  value={formData.daysPerWeek}
+                  onChange={(e) => updateForm("daysPerWeek", e.target.value)}
+                ></Select>
+                <Select
+                  id="sessionLength"
+                  label="What is your session's duration"
+                  options={sessionOptions}
+                  value={formData.sessionLength}
+                  onChange={(e) => updateForm("sessionLength", e.target.value)}
+                ></Select>
+              </div>
+              <Textarea
+                id="injuries"
+                label="Any injuries or limitations"
+                placeholder="E.g. Lower Back issue, Shoulder Impingement..."
+                rows={3}
+                value={formData.injuries}
+                onChange={(e) => updateForm("injuries", e.target.value)}
+              />
+              <div className="flex gap-3 pt-2">
+                <Button type="submit" className="flex-1 gap-2">
+                  Generate My Plan <ArrowRight className="w-4 h-4" />
+                </Button>
+              </div>
+            </form>
+          </Card>
           {/* Step2 : Generating */}
         </div>
       </div>
