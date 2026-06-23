@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import dotenv from "dotenv";
 import { TrainingPlan, UserProfile } from "../types/";
+import { error } from "node:console";
 
 dotenv.config();
 export async function generateTrainingPlan(
@@ -30,6 +31,27 @@ export async function generateTrainingPlan(
   });
   // Build the prompt
   const prompt = buildPrompt(normalizedProfile);
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "nvidia/llama-nemotron-embed-vl-1b-v2:free",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are an expert fitness trainer and program designer. You must respond with valid JSON only. Do not include any markdown, reasoning, or additional text.",
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      temperature: 0.7,
+      response_format: { type: "json_object" },
+    });
+  } catch (err) {
+    console.error("[AI] Error generating training plan: ", err);
+    throw error;
+  }
 }
 
 // Promp Specification and Response Format
