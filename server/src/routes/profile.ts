@@ -1,6 +1,7 @@
 import { Router, type Request, type Response } from "express";
 import { error } from "node:console";
 import { prisma } from "../lib/prisma";
+import { create } from "node:domain";
 export const profileRouter = Router();
 
 profileRouter.post("/", async (req: Request, res: Response) => {
@@ -33,7 +34,32 @@ profileRouter.post("/", async (req: Request, res: Response) => {
         error: "Missing required fields",
       });
     }
-    // await prisma.user_profiles.upsert(where:{user_id:userId},update:{})
+    await prisma.user_profiles.upsert({
+      where: { user_id: userId },
+      update: {
+        goal,
+        experience,
+        days_perWeek: daysPerWeek,
+        session_length: sessionLength,
+        equipment,
+        injuries,
+        preferred_split: preferredSplit,
+        updated_at: new Date(),
+      },
+      create: {
+        user_id: userId,
+        goal,
+        experience,
+        days_perWeek: daysPerWeek,
+        session_length: sessionLength,
+        equipment,
+        injuries,
+        preferred_split: preferredSplit,
+      },
+    });
+    res.json({
+      success: true,
+    });
   } catch (err) {
     console.error("Error saving profile: ", error);
     res.status(500).json({

@@ -7,15 +7,22 @@ import {
   type ReactNode,
 } from "react";
 import { authClient } from "../lib/auth";
+import type { UserProfile } from "../types";
+import { api } from "../lib/api";
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
+  saveProfile: (
+    profile: Omit<UserProfile, "userId" | "updatedAt">,
+  ) => Promise<void>;
 }
 const AuthContext = createContext<AuthContextType | null>(null);
 export default function AuthProvider({ children }: { children: ReactNode }) {
   const [neonUser, setNeonUser] = useState<any>(null);
   const [isLoading, setLoading] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isError, setError] = useState("");
   useEffect(() => {
     async function loadUser() {
       try {
@@ -33,8 +40,23 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     }
     loadUser();
   }, []);
+  async function saveProfile(
+    profileData: Omit<UserProfile, "userId" | "updatedAt">,
+  ) {
+    if (!neonUser) {
+      throw new Error("User must be authenticated to save the profile");
+    }
+    try {
+      await api.saveProfile(neonUser.id, profileData);
+      setIsGenerating(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save profile");
+    } finally {
+      setIsGenerating(false);
+    }
+  }
   return (
-    <AuthContext.Provider value={{ user: neonUser, isLoading }}>
+    <AuthContext.Provider value={{ user: neonUser, isLoading, saveProfile }}>
       {children}
     </AuthContext.Provider>
   );
