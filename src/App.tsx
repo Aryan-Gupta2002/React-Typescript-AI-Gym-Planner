@@ -22,7 +22,7 @@ function App() {
                 <Route path="/onboarding" element={<Onboarding />}></Route>
                 <Route path="/profile" element={<Profile />}></Route>
                 <Route path="/auth/:pathname" element={<Auth />}></Route>
-                <Route path="/account:pathname" element={<Account />}></Route>
+                <Route path="/account/:pathname" element={<Account />}></Route>
                 <Route path="*" element={<NotFound />}></Route>
               </Routes>
             </main>
