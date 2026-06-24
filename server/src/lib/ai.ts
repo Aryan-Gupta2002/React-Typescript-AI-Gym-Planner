@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import dotenv from "dotenv";
 import { TrainingPlan, UserProfile } from "../types/";
 import { error } from "node:console";
+import { Completions } from "openai/resources/chat/completions";
 
 dotenv.config();
 export async function generateTrainingPlan(
@@ -17,13 +18,13 @@ export async function generateTrainingPlan(
     injuries: profile.injuries || null,
     preferred_split: profile.preferred_split || "upper_lower",
   };
-  const apiKey = process.env.OPEN_ROUTER_KEY;
+  const apiKey = process.env.NVIDIA_API_KEY;
   if (!apiKey) {
-    throw new Error("OPEN_ROUTER_KEY is not set in environment variable");
+    throw new Error("NVIDIA_API_KEY is not set in environment variable");
   }
   const openai = new OpenAI({
     apiKey,
-    baseURL: "http://openrouter.ai/api/v1",
+    baseURL: process.env.NVIDIA_BASE_URL,
     defaultHeaders: {
       "HTTP-Referer": process.env.BASE_URL || "http:localhost:3001",
       "X-Title": "GymAI Plan Generator",
@@ -32,9 +33,9 @@ export async function generateTrainingPlan(
   // Build the prompt
   const prompt = buildPrompt(normalizedProfile);
   try {
-    const completion = await openai.chat.completions.create({
-      model: "nvidia/llama-nemotron-embed-vl-1b-v2:free",
-      messages: [
+    const response = await openai.responses.create({
+      model: process.env.NVIDIA_MODEL_NAME, // an actual OpenAI model — OpenRouter model slugs won't work here
+      input: [
         {
           role: "system",
           content:
@@ -46,12 +47,58 @@ export async function generateTrainingPlan(
         },
       ],
       temperature: 0.7,
-      response_format: { type: "json_object" },
+      text: { format: { type: "json_object" } },
     });
+
+    const content = response.output_text;
+    if (!content) {
+      console.error(
+        "[AI] No content in response",
+        JSON.stringify(response, null, 2),
+      );
+      throw new Error("No content in AI response");
+    }
+    const planData = JSON.parse(content);
+    return formatPlanResponse(planData, normalizedProfile);
   } catch (err) {
     console.error("[AI] Error generating training plan: ", err);
     throw error;
   }
+}
+
+function formatPlanResponse(
+  aiResponse: any,
+  profile: UserProfile,
+): Omit<TrainingPlan, "id" | "userId" | "version" | "createdAt"> {
+  const plan: Omit<TrainingPlan, "id" | "userId" | "version" | "createdAt"> = {
+    overview: {
+      goal: aiResponse.overview?.goal || `Customized ${profile.goal} program`,
+      frequency:
+        aiResponse.overview?.frequency ||
+        `${profile.days_per_week} days per week`,
+      split: aiResponse.overview?.split || profile.preferred_split,
+      notes:
+        aiResponse.overview?.notes ||
+        "Follow the program consistently for best results.",
+    },
+    weeklySchedule: (aiResponse.weeklySchedule || []).map((day: any) => ({
+      day: day.day || "Day",
+      focus: day.focus || "Full Body",
+      exercises: (day.exercises || []).map((ex: any) => ({
+        name: ex.name || "Exercise",
+        sets: ex.sets || 3,
+        reps: ex.reps || "8-12",
+        rest: ex.rest || "60-90 sec",
+        rpe: ex.rpe || 7,
+        notes: ex.notes,
+        alternatives: ex.alternatives,
+      })),
+    })),
+    progression:
+      aiResponse.progression ||
+      "Increase weight by 2.5-5lbs when you can complete all sets with good form. Track your progress weekly.",
+  };
+  return plan;
 }
 
 // Promp Specification and Response Format
