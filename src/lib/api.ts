@@ -18,8 +18,9 @@ async function post(path: string, body: object) {
 async function get(path: string) {
   const res = await fetch(`${BASE_URL}/api${path}`);
   if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.error || "Request Failed");
+    throw new Error(
+      (await res.json().catch(() => ({}))).Error || "Request Failed",
+    );
   }
   return res.json();
 }
@@ -33,5 +34,8 @@ export const api = {
   },
   generatePlan: (userId: string) => {
     return post("/plan/generate", { userId });
+  },
+  getCurrentPlan: (userId: string) => {
+    return get(`/plan/current?userId=${userId}`);
   },
 };
