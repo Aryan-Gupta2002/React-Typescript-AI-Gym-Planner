@@ -3,6 +3,7 @@ const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 async function post(path: string, body: object) {
   const res = await fetch(`${BASE_URL}/api${path}`, {
+    method: "POST",
     headers: { "Content-type": "application/json" },
     body: JSON.stringify(body),
   });
@@ -13,12 +14,24 @@ async function post(path: string, body: object) {
   }
   return res.json();
 }
-async function get() {}
+
+async function get(path: string) {
+  const res = await fetch(`${BASE_URL}/api${path}`);
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || "Request Failed");
+  }
+  return res.json();
+}
+
 export const api = {
   saveProfile: (
     userId: string,
     profile: Omit<UserProfile, "userId" | "updatedAt">,
   ) => {
     return post("/profile", { userId, ...profile });
+  },
+  generatePlan: (userId: string) => {
+    return post("/plan/generate", { userId });
   },
 };

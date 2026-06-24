@@ -7,7 +7,7 @@ import { Completions } from "openai/resources/chat/completions";
 dotenv.config();
 export async function generateTrainingPlan(
   profile: UserProfile | Record<string, any>,
-): Promise<TrainingPlan> {
+): Promise<Omit<TrainingPlan, "id" | "userId" | "version" | "createdAt">> {
   // Normalize profile data
   const normalizedProfile: UserProfile = {
     goal: profile.goal || "bulk",
@@ -25,6 +25,7 @@ export async function generateTrainingPlan(
   const openai = new OpenAI({
     apiKey,
     baseURL: process.env.NVIDIA_BASE_URL,
+    timeout: 60_000,
     defaultHeaders: {
       "HTTP-Referer": process.env.BASE_URL || "http:localhost:3001",
       "X-Title": "GymAI Plan Generator",
@@ -33,9 +34,9 @@ export async function generateTrainingPlan(
   // Build the prompt
   const prompt = buildPrompt(normalizedProfile);
   try {
-    const response = await openai.responses.create({
-      model: process.env.NVIDIA_MODEL_NAME, // an actual OpenAI model — OpenRouter model slugs won't work here
-      input: [
+    const response = await openai.chat.completions.create({
+      model: process.env.NVIDIA_MODEL_NAME,
+      messages: [
         {
           role: "system",
           content:
@@ -47,10 +48,10 @@ export async function generateTrainingPlan(
         },
       ],
       temperature: 0.7,
-      text: { format: { type: "json_object" } },
+      // response_format: { type: "json_object" },
     });
 
-    const content = response.output_text;
+    const content = response.choices[0].message.content;
     if (!content) {
       console.error(
         "[AI] No content in response",
@@ -62,7 +63,7 @@ export async function generateTrainingPlan(
     return formatPlanResponse(planData, normalizedProfile);
   } catch (err) {
     console.error("[AI] Error generating training plan: ", err);
-    throw error;
+    throw err;
   }
 }
 

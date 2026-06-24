@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import { ArrowRight, Bubbles, Loader2 } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import type { UserProfile } from "../types";
+import { useNavigate } from "react-router-dom";
 
 const goalOptions = [
   { value: "bulk", label: "Build Muscle (Bulk)" },
@@ -51,7 +52,7 @@ const splitOptions = [
 ];
 
 export default function Onboarding() {
-  const { user, saveProfile } = useAuth();
+  const { user, saveProfile, generatePlan } = useAuth();
   const [formData, setFormData] = useState({
     goal: "bulk",
     experience: "intermediate",
@@ -61,8 +62,11 @@ export default function Onboarding() {
     injuries: "",
     preferredSplit: "upper_lower",
   });
+
   const [isGenerating, setIsGenerating] = useState(false);
   const [isError, setError] = useState("");
+  const navigate = useNavigate();
+
   function updateForm(field: string, value: string) {
     setFormData((prev) => ({ ...prev, [field]: value }));
   }
@@ -80,6 +84,8 @@ export default function Onboarding() {
     try {
       await saveProfile(profile);
       setIsGenerating(true);
+      await generatePlan();
+      navigate("/profile");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save profile");
     } finally {
@@ -103,6 +109,7 @@ export default function Onboarding() {
               <p className="text-[var(---color-muted)] mb-6">
                 Help us create the perfect plan for you{" "}
               </p>
+              {isError && <p className="text-red-500 mb-4">{isError}</p>}
               <form onSubmit={handleQuestionnaire} className="space-y-5">
                 <Select
                   id="goal"
@@ -136,6 +143,21 @@ export default function Onboarding() {
                     }
                   ></Select>
                 </div>
+                <Select
+                  id="equipment"
+                  label="Equipment access"
+                  options={equipmentOptions}
+                  value={formData.equipment}
+                  onChange={(e) => updateForm("equipment", e.target.value)}
+                />
+
+                <Select
+                  id="preferredSplit"
+                  label="Preferred training split"
+                  options={splitOptions}
+                  value={formData.preferredSplit}
+                  onChange={(e) => updateForm("preferredSplit", e.target.value)}
+                />
                 <Textarea
                   id="injuries"
                   label="Any injuries or limitations"
