@@ -12,7 +12,7 @@ import { Card } from "../components/ui/Card";
 import { PlanDisplay } from "../components/plan/PlanDisplay";
 
 export default function Profile() {
-  const { user, isLoading, plan } = useAuth();
+  const { user, isLoading, plan, generatePlan } = useAuth();
   if (!user && !isLoading) {
     return <Navigate to="/auth/sign-in" replace />;
   }
@@ -28,10 +28,6 @@ export default function Profile() {
       hour: "2-digit",
       minute: "2-digit",
     });
-  }
-
-  function generatePlan(): void | PromiseLike<void> {
-    throw new Error("Function not implemented.");
   }
 
   return (
@@ -105,6 +101,13 @@ export default function Profile() {
         {/* Weekly Schedule */}
         <h2 className="font-semibold text-xl mb-4">Weekly Schedule</h2>
         <PlanDisplay weeklySchedule={plan.weeklySchedule} />
+
+        <Card variant="bordered" className="mb-8">
+          <h2 className="font-semibold text-lg mb-2">Progression Strategy</h2>
+          <p className="text-[var(--color-muted)] text-sm leading-relaxed">
+            {plan.progression}
+          </p>
+        </Card>
       </div>
     </div>
   );
