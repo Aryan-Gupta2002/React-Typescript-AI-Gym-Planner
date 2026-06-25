@@ -1,4 +1,5 @@
 import { Link, Navigate } from "react-router-dom";
+import gymPhoto from "../assets/GymPhoto.jpg";
 import {
   Zap,
   Target,
@@ -50,9 +51,13 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-6 overflow-hidden">
         {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-accent)]/5 via-transparent to-transparent" />
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[var(--color-accent)]/10 rounded-full blur-3xl" />
-
+        {/* <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-accent)]/5 via-transparent to-transparent" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[var(--color-accent)]/10 rounded-full blur-3xl" /> */}
+        <div className="absolute inset-0 -z-10">
+          <img src={gymPhoto} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/70" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[var(--color-background)]" />
+        </div>
         <div className="relative max-w-6xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-card)] border border-[var(--color-border)] mb-8">
             <Zap className="w-4 h-4 text-[var(--color-accent)]" />

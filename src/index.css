@@ -1,5 +1,8 @@
+html {
+  scroll-behavior: smooth;
+}
 @import "tailwindcss";
-@import '@neondatabase/neon-js/ui/tailwind';
+@import "@neondatabase/neon-js/ui/tailwind";
 @theme {
   --font-sans: "Geist", system-ui, sans-serif;
 

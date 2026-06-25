@@ -3,11 +3,20 @@ import { Button } from "../ui/Button";
 import { useAuth } from "../../context/AuthContext";
 import { UserButton } from "@neondatabase/neon-js/auth/react";
 import { Dumbbell } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 export default function Navbar() {
   const user = useAuth();
+  const location = useLocation();
+  const isHome = location.pathname === "/";
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-background)]/80 backdrop-blur-md">
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors ${
+        isHome
+          ? "bg-transparent border-b border-transparent"
+          : "border-b border-[var(--color-border)] bg-[var(--color-background)]/80 backdrop-blur-md"
+      }`}
+    >
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <Link
           to="/"
