@@ -39,7 +39,7 @@ profileRouter.post("/", async (req: Request, res: Response) => {
       update: {
         goal,
         experience,
-        days_perWeek: daysPerWeek,
+        days_per_week: daysPerWeek,
         session_length: sessionLength,
         equipment,
         injuries,
@@ -50,7 +50,7 @@ profileRouter.post("/", async (req: Request, res: Response) => {
         user_id: userId,
         goal,
         experience,
-        days_perWeek: daysPerWeek,
+        days_per_week: daysPerWeek,
         session_length: sessionLength,
         equipment,
         injuries,

@@ -3,7 +3,7 @@ CREATE TABLE "user_profiles" (
     "user_id" UUID NOT NULL,
     "goal" VARCHAR(20) NOT NULL,
     "experience" VARCHAR(20) NOT NULL,
-    "days_perWeek" INTEGER NOT NULL,
+    "days_per_week" INTEGER NOT NULL,
     "session_length" INTEGER NOT NULL,
     "equipment" VARCHAR(20) NOT NULL,
     "injuries" TEXT,

@@ -17,6 +17,7 @@ planRouter.post("/generate", async (req: Request, res: Response) => {
     const profile = await prisma.user_profiles.findUnique({
       where: { user_id: userId },
     });
+    console.log(profile);
     if (!profile) {
       return res.status(400).json({
         error: "User Profile not found. Must complete onboarding first",
