@@ -50,6 +50,14 @@ planRouter.post("/generate", async (req: Request, res: Response) => {
         version: nextVersion,
       },
     });
+
+    // Reset injuries
+    await prisma.user_profiles.update({
+      where: { user_id: userId },
+      data: { injuries: null },
+    });
+    1;
+
     res.json({
       id: newPlan.id,
       version: newPlan.version,

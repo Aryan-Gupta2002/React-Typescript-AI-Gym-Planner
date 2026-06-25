@@ -10,9 +10,11 @@ import {
 } from "lucide-react";
 import { Card } from "../components/ui/Card";
 import { PlanDisplay } from "../components/plan/PlanDisplay";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const { user, isLoading, plan, generatePlan } = useAuth();
+  const navigate = useNavigate();
   if (!user && !isLoading) {
     return <Navigate to="/auth/sign-in" replace />;
   }
@@ -44,7 +46,8 @@ export default function Profile() {
           <Button
             variant="secondary"
             className="gap-2"
-            onClick={async () => await generatePlan()}
+            // onClick={async () => await generatePlan()}
+            onClick={() => navigate("/onboarding")}
           >
             <RefreshCcw className="w-4 h-4" />
             Regenerate Plan

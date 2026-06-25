@@ -160,11 +160,12 @@ export default function Onboarding() {
                 />
                 <Textarea
                   id="injuries"
-                  label="Any injuries or limitations"
+                  label="Extra Note for AI (e.g. any injuries or limitations)"
                   placeholder="E.g. Lower Back issue, Shoulder Impingement..."
                   rows={3}
                   value={formData.injuries}
                   onChange={(e) => updateForm("injuries", e.target.value)}
+                  autoComplete="off"
                 />
                 <div className="flex gap-3 pt-2">
                   <Button type="submit" className="flex-1 gap-2">
