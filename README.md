@@ -4,7 +4,7 @@ GymAI is a full-stack web app that generates **personalized, structured gym trai
 
 > Built to explore how an LLM can be used as a structured data engine (not just a chatbot) — the model is prompted to return strict JSON, which is then validated, normalized, and persisted to a relational database.
 
-🎥 **Demo video:** [Watch on YouTube](#) *(coming soon)*
+🎥 **Demo video:** https://youtu.be/e2npTL5gBUk(#) 
 
 ### 📸 Screenshots
 
