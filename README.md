@@ -4,12 +4,32 @@ GymAI is a full-stack web app that generates **personalized, structured gym trai
 
 > Built to explore how an LLM can be used as a structured data engine (not just a chatbot) — the model is prompted to return strict JSON, which is then validated, normalized, and persisted to a relational database.
 
-<!-- 
-TODO: Add a demo GIF or screenshot here, e.g.:
-![GymAI Demo](./docs/demo.gif)
--->
-
 🎥 **Demo video:** [Watch on YouTube](#) *(coming soon)*
+
+### 📸 Screenshots
+
+<p align="center">
+  <img src="./docs/screenshots/home.jpg" alt="GymAI Landing Page" width="800"/>
+  <br/>
+  <sub>Landing page</sub>
+</p>
+
+<table>
+  <tr>
+    <td><img src="./docs/screenshots/onboarding.png" alt="Onboarding questionnaire" width="400"/></td>
+    <td><img src="./docs/screenshots/profile.png" alt="Generated training plan overview" width="400"/></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Onboarding questionnaire</sub></td>
+    <td align="center"><sub>Generated plan overview</sub></td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="./docs/screenshots/weekly-schedule.png" alt="Weekly workout schedule" width="800"/>
+  <br/>
+  <sub>AI-generated weekly schedule with sets, reps, rest, and RPE</sub>
+</p>
 
 ---
 
